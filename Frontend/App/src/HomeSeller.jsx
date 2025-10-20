@@ -7,6 +7,7 @@ export default function HomeSeller() {
   const Navigate = useNavigate()
 
   const[orders,setorders]=useState([])
+  const [totalrevenue,settotalrevenue]=useState(0)
 
   async function logout(){
     const result = await fetch('http://localhost:7000/logout',{
@@ -15,6 +16,14 @@ export default function HomeSeller() {
     })
 
     Navigate('/',{replace:true})
+  }
+
+  function calculaterevenue(){
+    let total =0
+    orders.forEach(order=>{
+      total=total+order.price
+    })
+    settotalrevenue(total)
   }
 
   async function fetchOrders(){
@@ -31,8 +40,15 @@ export default function HomeSeller() {
   }
 
   useEffect(()=>{
-    fetchOrders()
+    fetchOrders();
+    
   },[])
+
+    useEffect(()=>{
+    calculaterevenue();
+    
+  },[orders])
+
 
 
 
@@ -126,15 +142,15 @@ export default function HomeSeller() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div className="bg-white p-6 rounded-xl shadow text-center">
               <h3 className="text-xl font-bold">Total Sales</h3>
-              <p className="text-2xl font-semibold mt-2">125</p>
+              <p className="text-2xl font-semibold mt-2">{orders.length}</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow text-center">
               <h3 className="text-xl font-bold">Top City</h3>
-              <p className="text-2xl font-semibold mt-2">Delhi</p>
+              <p className="text-2xl font-semibold mt-2">Not Enough Data</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow text-center">
               <h3 className="text-xl font-bold">Total Revenue</h3>
-              <p className="text-2xl font-semibold mt-2">₹ 2,50,000</p>
+              <p className="text-2xl font-semibold mt-2">₹ {totalrevenue}</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow text-center">
               <h3 className="text-xl font-bold">Views</h3>

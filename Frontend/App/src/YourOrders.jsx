@@ -12,6 +12,7 @@ export default function YourOrders(){
     const result = await fetch('http://localhost:7000/fetchOrders',{
       method:'post',
       credentials:'include',
+      body:JSON.stringify({customer:true}),
       headers:{
         'Content-Type':'application/json'
       }
