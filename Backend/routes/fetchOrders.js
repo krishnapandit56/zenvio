@@ -1,0 +1,17 @@
+const express = require('express')
+const router = express.Router()
+const ordersSchema = require('../schemas/ordersSchema')
+const verifyToken = require('../middleware/verifyToken')
+
+router.post('/',verifyToken,async(req ,res)=>{
+const username = req.username
+
+const array = await await ordersSchema.find({username}).sort({_id:-1})
+res.json({array})
+
+    
+
+})
+
+
+module.exports = router

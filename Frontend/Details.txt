@@ -1,0 +1,69 @@
+Seller-Home 
+
+new orders
+dashboard
+upload products
+view profile
+
+==============
+Product Schema 
+==============
+
+productname
+category(men,women,kids)
+sub category(t shirt,pant)
+available size 
+material
+price 
+quantity available
+imageurl
+
+=================
+Your Products 
+=================
+
+Delivery withing how many days
+Areas in which can be delivered (City)
+
+Logic for cart system
+- when user adds a product to cart , its productid and username is stored in 'cart' collection and then product is fetched with its id
+
+=====================================================================FRONTEND===================================================================
+
+Home Page Customer 
+==================
+
+navbar - logo, searchbar , your cart , your orders , Username(details of user on hover)
+
+=====================================
+orders Schema
+=====================================
+
+fullname
+contactnumber
+contactemail
+Citypincode
+address
+quantity
+username (seller)
+
+========================================
+order details for seller
+========================================
+
+product name
+product id
+product image 
+quantity
+
+customer name
+customer contact number
+customer contact email
+customer city 
+pincode
+customer address 
+date 
+order id 
+
+
+
