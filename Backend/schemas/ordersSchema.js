@@ -14,7 +14,8 @@ customerusername:String,
 productid:String,
 productname:String,
 imageurl:String,
-price:Number
+price:Number,
+deliverytime:Number
 })
 
 const model = mongoose.model('orders',schema)

@@ -15,6 +15,7 @@ import EditProduct from './EditProduct'
 import ViewProduct from './ViewProduct'
 import YourCart from './YourCart'
 import Buy from './Buy'
+import YourOrders from './YourOrders'
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
       <Route path='/viewproduct' element={<ViewProduct/>}/>
       <Route path='/yourcart' element={<YourCart/>}/>
       <Route path='/Buy' element={<Buy/>}/>
+      <Route path='/YourOrders' element={<YourOrders/>}/>
     </Routes>
 
    </div>

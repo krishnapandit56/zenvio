@@ -18,10 +18,11 @@ router.post('/',verifyToken,async(req ,res)=>{
     const productname = req.body.productname
     const imageurl=req.body.imageurl
     const price=req.body.price
+    const deliverytime=req.body.deliverytime
 
   console.log(productname,imageurl,price)
 
-    const result = ordersSchema({fullname,contactnumber,contactemail,city,pincode,address,quantity,date,username,customerusername,productid,productname,imageurl,price})
+    const result = ordersSchema({fullname,contactnumber,contactemail,city,pincode,address,quantity,date,username,customerusername,productid,productname,imageurl,price,deliverytime})
     const r = await result.save()
 
     if(!result){

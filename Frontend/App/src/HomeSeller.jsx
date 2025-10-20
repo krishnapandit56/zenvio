@@ -37,7 +37,7 @@ export default function HomeSeller() {
 
 
   return (
-    <div className="min-h-screen w-screen bg-gray-100 flex flex-col pr-2">
+    <div className="min-h-screen w-screen bg-gray-100 flex flex-col ">
       {/* Top Bar */}
       <div className="flex items-center justify-between bg-gradient-to-r from-white to-[#f1ac66] text-white p-4 pr-10">
         <h1 className="text-lg font-bold text-gray-700">Dashboard</h1>
@@ -103,6 +103,10 @@ export default function HomeSeller() {
       <p>
         <span className="font-semibold ">Ordered On :</span>{" "}
         {order.date}
+      </p>
+      <p>
+        <span className="font-semibold ">Delivery Time :</span>{" "}
+        {order.deliverytime}
       </p>
       <p>
         <span className="font-semibold ">Order Id:</span>{" "}

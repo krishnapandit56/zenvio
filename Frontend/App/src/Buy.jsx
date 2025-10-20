@@ -10,6 +10,7 @@ export default function Buy() {
     const productname = product.productname
     const imageurl = product.imageurl 
     const price = product.price
+    const deliverytime = product.deliverytime
 
     const[fullname,setfullname]=useState('')
     const[contactnumber,setcontactnumber]=useState()
@@ -18,6 +19,7 @@ export default function Buy() {
     const[pincode,setpincode]=useState('')
     const[address,setaddress]=useState('')
     const[quantity,setquantity]=useState()
+    const[show,setshow]=useState(false)
 
 
 
@@ -50,7 +52,7 @@ export default function Buy() {
         {
           method:'post',
           credentials:'include',
-          body:JSON.stringify({fullname,contactnumber,contactemail,city,pincode,address,quantity,date,seller,productid,productname,imageurl,price}),
+          body:JSON.stringify({fullname,contactnumber,contactemail,city,pincode,address,quantity,date,seller,productid,productname,imageurl,price,deliverytime}),
           headers:{
             'Content-type':'application/json'
           }
@@ -61,6 +63,7 @@ export default function Buy() {
       setbuttontext(r.ordermessage)
       if(r.status===1){
         setbuttoncolor('!bg-green-600')
+        setshow(true)
       }
       if(r.status===0){
         setbuttoncolor('!bg-red-600')
@@ -167,6 +170,7 @@ export default function Buy() {
             >
               {buttontext}
             </button>
+            {show?<p className="pl-4">You Can Verify Full Order Details In <b>'Your Orders'</b> Section</p>:<></>}
           </form>
         </div>
       </div>

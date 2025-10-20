@@ -46,6 +46,8 @@ export default function ViewProduct(){
         <div className="w-screen min-h-screen bg-white p-4 md:p-10 "> 
 
             
+
+            
             
             {/* Flex container for image and details. Adjusted layout for better responsiveness */}
             <div className="flex flex-col lg:flex-row gap-0 "> 

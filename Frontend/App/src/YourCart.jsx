@@ -42,8 +42,8 @@ export default function YourCart(){
 
     return(
         <>
-        <div className="flex flex-col gap-4 bg-orange-100">
-        <div className="flex items-center justify-center pb-5 pt-5 bg-orange-100 ">
+        <div className="flex flex-col gap-4 bg-gradient-to-r from-orange-50 to-orange-200 pt-0">
+        <div className="flex items-center justify-center   ">
                 <h1 className="text-black">Your Cart</h1>
             </div>
          <div className="w-screen h-[651.5px] bg-white overflow-auto px-4">
@@ -51,13 +51,14 @@ export default function YourCart(){
         {cartarray.map((element) => (
           <div
             key={element._id}
-            className="border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-2 mb-4 "
+            className="border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-2 mb-4 hover:cursor-pointer "
+            onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
           >
             <div className="h-[165px] w-[165px] flex-shrink-0">
               <img src={element.imageurl} className="h-full w-full object-cover" />
             </div>
 
-            <div className="pl-5 flex-1">
+            <div className="pl-5 pt-2 pb-2 flex-1">
               <h2 className="text-black">
                 <b>Product Name :</b> {element.productname}
               </h2>
@@ -92,12 +93,7 @@ export default function YourCart(){
             </div>
 
             <div className="flex flex-col ml-auto pr-4 gap-5">
-              <button
-                className="!bg-white text-black shadow-md shadow-gray-500 !rounded-none" 
-                onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
-              >
-                View
-              </button>
+
               <button
                 className="!bg-white text-black shadow-md shadow-gray-500 !rounded-none" 
                 onClick={()=>{removecart(element._id)}}

@@ -6,7 +6,7 @@ const verifyToken = require('../middleware/verifyToken')
 router.post('/',verifyToken,async(req ,res)=>{
 const username = req.username
 
-const array = await await ordersSchema.find({username}).sort({_id:-1})
+const array =  await ordersSchema.find({username}).sort({_id:-1})
 res.json({array})
 
     

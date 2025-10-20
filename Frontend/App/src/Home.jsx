@@ -90,7 +90,7 @@ export default function Home() {
     <button onClick={()=>{Navigate('/yourcart',{state:username})}} className="w-[80px] md:w-[100px] flex items-center justify-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
       Your Cart
     </button>
-    <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
+    <button onClick={()=>{Navigate('/YourOrders',{state:username})}} className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
       Your Orders
     </button>
     <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
@@ -132,13 +132,14 @@ export default function Home() {
         {searcharray.map((element) => (
           <div
             key={element._id}
-            className="w-[320px] md:w-auto md:flex flex-row md:gap-2 items-center justify-center md:border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-9 mb-4"
+            className="w-[320px] md:w-auto md:flex flex-row md:gap-2 items-center justify-center md:border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-9 mb-4 hover:cursor-pointer"
+            onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
           >
             <div className="h-[80px] w-[80px] md:h-[165px] md:w-[165px] flex-shrink-0">
               <img src={element.imageurl} className="h-full w-full object-cover" />
             </div>
 
-            <div className="pl-5 flex-1">
+            <div className="pl-5 flex-1 pb-3">
               <h2 className="text-black">
                 <b>Product Name :</b> {element.productname}
               </h2>
@@ -172,14 +173,7 @@ export default function Home() {
               
             </div>
 
-            <div className="flex flex-col ml-auto pr-4">
-              <button
-                className="!bg-white text-black shadow-md shadow-gray-500 !rounded-none" 
-                onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
-              >
-                View
-              </button>
-            </div>
+            
           </div>
         ))}
       </div>
