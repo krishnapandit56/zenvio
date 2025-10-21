@@ -65,7 +65,7 @@ export default function HomeSeller() {
       {/* Content Area */}
       <div className="flex flex-col lg:flex-row flex-1">
         {/* Sidebar - New Orders */}
-        <div className="w-full lg:w-1/2 bg-white shadow-md p-4">
+        <div className="pt-70 md:pt-4 w-full lg:w-1/2 bg-white shadow-md p-4">
           <h2 className="text-lg font-semibold mb-4 text-center bg-[#f1ac66] text-white py-2 rounded-lg">
             New Orders
           </h2>

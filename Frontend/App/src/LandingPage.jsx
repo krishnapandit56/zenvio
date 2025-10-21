@@ -6,7 +6,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen w-screen bg-gradient-to-r from-white to-[#fdf1e5] flex flex-col">
       {/* Header */}
-      <div className="text-center pt-12">
+      <div className="text-center pt-40 md:pt-12">
         <h2 className="text-8xl font-bold text-gray-700 mb-2">Zenvio</h2>
         <p className="text-gray-500 text-lg mb-12 max-w-md mx-auto">
           A platform to showcase and sell your product worldwide

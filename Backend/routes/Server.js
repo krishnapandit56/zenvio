@@ -26,6 +26,8 @@ const getcart = require('./getcart')
 const removecart = require('./removecart')
 const confirmorder = require('./confirmorder')
 const fetchOrders = require('./fetchOrders')
+const addrecentsearch = require('./addrecentsearch')
+const fetchrecentsearch = require('./fetchrecentsearch')
 
 app.use(cors({origin:'http://localhost:5173',credentials:true})) 
 app.use(express.json()) 
@@ -51,6 +53,8 @@ app.use('/getcart',getcart)
 app.use('/removecart',removecart)
 app.use('/confirmorder',confirmorder)
 app.use('/fetchOrders',fetchOrders)
+app.use('/addrecentsearch',addrecentsearch)
+app.use('/fetchrecentsearch',fetchrecentsearch)
 
 // //////////////////////// CONNECTING MONGODB //////////////////////////////
 async function connectdb(){

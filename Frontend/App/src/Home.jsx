@@ -8,9 +8,12 @@ export default function Home() {
 
   const [searchtext, setSearchtext] = useState("");
   const [searcharray, setSearcharray] = useState([]);
+  const [recentarray,setrecentarray] = useState([])
+  const [homestatus,sethomestatus]=useState(true)
 
   // Fetch search results
   async function fetchsearch(query) {
+    
     const result = await fetch(
       `http://localhost:7000/searchproduct?searchtext=${encodeURIComponent(
         query
@@ -26,12 +29,45 @@ export default function Home() {
 
     let r = await result.json();
     setSearcharray(r.searchproduct || []);
+
+if (query && query.trim() !== "") {
+  await fetch('http://localhost:7000/addrecentsearch', {
+    method: "post",
+    body: JSON.stringify({ keyword: query }),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
   }
 
   // Navigate on search
   function search() {
     Navigate(`/Home?searchtext=${encodeURIComponent(searchtext)}`,{state:username});
   }
+  
+  async function fetchrecentsearch(){
+     const result1 = await fetch(
+      'http://localhost:7000/fetchrecentsearch',
+      {
+        method: "post",
+        
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    let r1 = await result1.json()
+    setrecentarray(r1.products)
+    
+    
+  }
+
+  useEffect(()=>{
+    fetchrecentsearch()
+  },[])
+
 
   // Run search when URL changes
   useEffect(() => {
@@ -41,6 +77,16 @@ export default function Home() {
     fetchsearch(query);
   }, [location.search]);
 
+    async function logout(){
+    const result = await fetch('http://localhost:7000/logout',{
+      method:'post',
+      credentials:'include'
+    })
+
+    Navigate('/',{replace:true})
+  }
+  console.log(recentarray)
+  
   return (
     <div className="min-h-screen max-w-screen  bg-gray-50 overflow-x-hidden overflow-y-auto">
       {/* Navbar */}
@@ -96,7 +142,7 @@ export default function Home() {
     <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
       {username}
     </button>
-        <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-300 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
+        <button onClick={()=>{logout()}} className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-300 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
       Logout
     </button>
   </div>
@@ -122,13 +168,13 @@ export default function Home() {
 
 
       {/* Main content */}
-      <main className="hidden md:block p-5 text-center text-gray-500 pt-35">
+      {/* <main className="hidden md:block p-5 text-center text-gray-500 pt-35">
         <h1 className="text-3xl font-semibold">Welcome to ZENVIO Clothing</h1>
         <p className="mt-4">Discover the latest trends and timeless styles.</p>
-      </main>
+      </main> */}
 
       {/* Search results */}
-      <div className="relative top-[100px] text-[10px] md:text-sm md:static md:w-[350px] md:w-screen h-[601.5px] bg-white overflow-auto px-4">
+      <div className="relative top-[100px] text-[10px] md:text-sm md:relative pb-4 md:w-[350px] md:w-screen h-[601.5px] bg-white overflow-auto scroll-smooth px-4">
         {searcharray.map((element) => (
           <div
             key={element._id}
@@ -176,6 +222,63 @@ export default function Home() {
             
           </div>
         ))}
+        {
+          searchtext.length===0 && <div>
+          <h2 className="text-gray-700 text-3xl font-semibold flex">Based On Your Recent Search History</h2>
+        </div>
+        }
+        
+              {searchtext.length===0 && recentarray.map((element) => (
+              
+          <div
+            key={element._id}
+            className="relative top-[20px] w-[320px] md:w-auto md:flex flex-row md:gap-2 items-center justify-center md:border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-9 mb-4 hover:cursor-pointer"
+            onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
+          >
+            
+            <div className="h-[50px] w-[50px] md:h-[165px] md:w-[165px] flex-shrink-0">
+              <img src={element.imageurl} className="h-full w-full object-cover" />
+            </div>
+
+            <div className="pl-5 flex-1 pb-3">
+              <h2 className="text-black">
+                <b>Product Name :</b> {element.productname}
+              </h2>
+              <h2 className="text-black">
+                <b>Product ID :</b> {element._id}
+              </h2>
+              <h2 className="text-black">
+                <b>Category :</b> {element.category}
+              </h2>
+              <h2 className="text-black">
+                <b>Sub Category :</b> {element.subcategory}
+              </h2>
+              <h2 className="text-black">
+                <b>Available Sizes :</b> {element.sizes.join(",")}
+              </h2>
+              <h2 className="text-black">
+                <b>Material :</b> {element.material}
+              </h2>
+              <h2 className="text-black">
+                <b>Price :</b> {element.price}
+              </h2>
+              <h2 className="text-black">
+                <b>Quantity :</b> {element.quantity}
+              </h2>
+              <h2 className="text-black">
+                <b>Delivery Time :</b> {element.deliverytime} (Days)
+              </h2>
+              <h2 className="text-black">
+                <b>Available In Cities :</b> {element.availablecities}
+              </h2>
+              
+            </div>
+
+            
+          </div>
+        ))}
+
+
       </div>
     </div>
   );

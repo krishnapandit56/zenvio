@@ -1,4 +1,4 @@
-import { Link,useNavigate } from "react-router-dom";
+import { Link,replace,useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Signin() {
