@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/': 'http://localhost:7000',
+      '/': 'https://zenvio-h5be.onrender.com',
     },
   },
 })
