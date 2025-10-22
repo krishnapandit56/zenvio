@@ -15,7 +15,7 @@ export default function Home() {
   async function fetchsearch(query) {
     
     const result = await fetch(
-      `http://localhost:7000/searchproduct?searchtext=${encodeURIComponent(
+      `/searchproduct?searchtext=${encodeURIComponent(
         query
       )}`,
       {
@@ -31,7 +31,7 @@ export default function Home() {
     setSearcharray(r.searchproduct || []);
 
 if (query && query.trim() !== "") {
-  await fetch('http://localhost:7000/addrecentsearch', {
+  await fetch('/addrecentsearch', {
     method: "post",
     body: JSON.stringify({ keyword: query }),
     credentials: "include",
@@ -48,7 +48,7 @@ if (query && query.trim() !== "") {
   
   async function fetchrecentsearch(){
      const result1 = await fetch(
-      'http://localhost:7000/fetchrecentsearch',
+      '/fetchrecentsearch',
       {
         method: "post",
         
@@ -78,7 +78,7 @@ if (query && query.trim() !== "") {
   }, [location.search]);
 
     async function logout(){
-    const result = await fetch('http://localhost:7000/logout',{
+    const result = await fetch('/logout',{
       method:'post',
       credentials:'include'
     })

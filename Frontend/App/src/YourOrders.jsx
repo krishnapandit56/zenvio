@@ -9,7 +9,7 @@ export default function YourOrders(){
     const[orders,setorders]=useState([])
 
   async function fetchOrders(){
-    const result = await fetch('http://localhost:7000/fetchOrders',{
+    const result = await fetch('/fetchOrders',{
       method:'post',
       credentials:'include',
       body:JSON.stringify({customer:true}),

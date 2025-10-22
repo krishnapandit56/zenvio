@@ -1,8 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
+// ✅ DO NOT import tailwindcss here — Tailwind is handled via postcss.config.js
 export default defineConfig({
-  plugins: [react(),tailwindcss()],
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/': 'http://localhost:7000',
+    },
+  },
 })

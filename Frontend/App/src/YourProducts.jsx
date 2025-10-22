@@ -10,7 +10,7 @@ export default function YourProducts(){
     ///////////////////////////////////////////////////////////////////
     async function getData(){
         console.log('get data called ')
-        let result = await fetch('http://localhost:7000/getdata',{
+        let result = await fetch('/getdata',{
             method:'post',
             credentials:'include',
             headers:{
@@ -32,7 +32,7 @@ async function deleteproduct(id){
         return
     }
 
-    let result = await fetch('http://localhost:7000/deleteproduct',{
+    let result = await fetch('/deleteproduct',{
             method:'post',
             body:JSON.stringify({id}),
             credentials:'include',

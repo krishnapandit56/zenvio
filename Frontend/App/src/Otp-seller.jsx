@@ -32,7 +32,7 @@ export default function Otpseller() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await fetch('http://localhost:7000/signupasseller',{
+    const result = await fetch('/signupasseller',{
         method:'post',
         body:JSON.stringify({ownername,ownerphonenumber,email,username,password,storename,city,state,storephonenumber,address,otp}),
         headers:{

@@ -10,7 +10,7 @@ export default function SigninAsSeller() {
   //=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/=/
   async function signin(e){
     e.preventDefault()
-    const result = await fetch('http://localhost:7000/signinasseller',{
+    const result = await fetch('/signinasseller',{
       method:'POST',
       body:JSON.stringify({username,password}),
       credentials:'include',
