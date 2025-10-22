@@ -4,5 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  // Remove custom css.transformer to let Tailwind + Vite handle it
+  css: {
+    transformer: 'postcss', // 👈 disables LightningCSS
+  },
 })
