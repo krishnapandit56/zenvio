@@ -236,7 +236,7 @@ if (query && query.trim() !== "") {
             onClick={()=>{Navigate(`/viewproduct?productname=${element.productname}&productid=${element._id}`,{state:element})}}
           >
             
-            <div className="h-[50px] w-[50px] md:h-[165px] md:w-[165px] flex-shrink-0">
+            <div className="h-[80px] w-[80px] md:h-[165px] md:w-[165px] flex-shrink-0">
               <img src={element.imageurl} className="h-full w-full object-cover" />
             </div>
 
@@ -260,7 +260,7 @@ if (query && query.trim() !== "") {
                 <b>Material :</b> {element.material}
               </h2>
               <h2 className="text-black">
-                <b>Price :</b> {element.price}
+                <b>Price : ₹</b> {element.price}
               </h2>
               <h2 className="text-black">
                 <b>Quantity :</b> {element.quantity}
