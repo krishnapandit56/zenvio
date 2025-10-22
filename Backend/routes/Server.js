@@ -12,24 +12,23 @@ const MONGOURL = process.env.MONGOURL;
 const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
 
 // Allowed origins
-// NOTE: Ensure 'http://localhost:5173' matches your frontend's exact development port.
 const originUrls = isProduction
-  ? FRONTEND_PROD_URL // Single string for production
-  : [
-      'http://localhost:3000',
-      'http://localhost:5173', 
-      'http://localhost:7000',
-      FRONTEND_PROD_URL,
+    ? FRONTEND_PROD_URL // Single string for production
+    : [
+        'http://localhost:3000',
+        'http://localhost:5173', 
+        'http://localhost:7000',
+        FRONTEND_PROD_URL,
     ];
 
-// --- LOGGING (for deployment debugging) ---
+// --- LOGGING ---
 console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
 console.log('Allowed origins:', originUrls);
 
 // --- MONGODB CONNECTION ---
 mongoose
-  .connect(MONGOURL) // Removed deprecated options as they are default in Mongoose 6+
+  .connect(MONGOURL)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
@@ -38,20 +37,28 @@ mongoose
 
 // --- MIDDLEWARES ---
 
-// ✅ FINAL SAFE CORS SETUP: Pass the array/string directly to the origin property.
-// The `cors` library handles array checking without crashing the server.
+// 1. ✅ FINAL CORS SETUP: Use the array directly and handle OPTIONS explicitly.
+// This is the most stable configuration for complex requests (like POSTs with credentials).
 app.use(
   cors({
     origin: originUrls, 
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    // Change success status from 204 to 200, which is sometimes more compatible
+    // and can help ensure headers are processed correctly by the browser.
+    optionsSuccessStatus: 200 
   })
 );
+
+// Explicitly handle OPTIONS preflight for all routes AFTER the cors middleware.
+// This ensures any OPTIONS request gets the correct headers from the cors middleware above.
+app.options('*', cors()); 
 
 app.use(express.json());
 app.use(cookieParser());
 
 // --- ROUTES ---
+// (Your routes remain the same)
 app.use('/Signup', require('./Signup'));
 app.use('/sendotp', require('./sendotp'));
 app.use('/verifyotp', require('./verifyotp'));
@@ -75,18 +82,16 @@ app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
 // --- ERROR HANDLER ---
-// A generic error handler to prevent uncaught exceptions from crashing the process
 app.use((err, req, res, next) => {
   console.error('🔥 Server Error:', err.message, err.stack);
   
-  // Set status to 500 if headers haven't been sent, otherwise let Express handle it.
   if (res.headersSent) {
     return next(err);
   }
   
   res.status(500).json({ 
     error: 'Internal Server Error', 
-    message: isProduction ? 'An unexpected error occurred.' : err.message // Hide detailed error in prod
+    message: isProduction ? 'An unexpected error occurred.' : err.message
   });
 });
 
