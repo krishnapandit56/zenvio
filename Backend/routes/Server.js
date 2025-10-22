@@ -4,47 +4,61 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-
-// NOTE: Ensure your .env file is correctly located relative to this server.js file.
-// The path '../../env/.env' suggests two levels up, then into an 'env' folder.
 require('dotenv').config({ path: path.join(__dirname, '../../env/.env') });
 
 // --- ENVIRONMENT AND CONFIGURATION ---
-
 const isProduction = process.env.NODE_ENV === 'production';
 const MONGOURL = process.env.MONGOURL;
 const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
 
-// Define allowed origins based on the environment
+// Allowed origins
 const originUrls = isProduction
-    ? FRONTEND_PROD_URL
-    : [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'http://localhost:7000',
-        FRONTEND_PROD_URL
-      ];
+  ? [FRONTEND_PROD_URL]
+  : [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://localhost:7000',
+      FRONTEND_PROD_URL,
+    ];
 
-// ... (MONGODB CONNECTION)
+// --- LOGGING ---
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Mongo URL Loaded:', !!MONGOURL);
+console.log('isProduction:', isProduction);
+console.log('Allowed origins:', originUrls);
+
+// --- MONGODB CONNECTION ---
+mongoose
+  .connect(MONGOURL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // --- MIDDLEWARES ---
 
-// 1. SIMPLIFIED CORS Configuration
-// This is less prone to throwing uncaught errors in the callback function.
-app.use(cors({
-    origin: originUrls, // Pass the array/string directly to the origin property
+// ✅ Safe CORS setup
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Allow server-to-server or Postman requests
+      if (originUrls.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.error('🚫 Blocked by CORS:', origin);
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-}));
+  })
+);
 
-// 2. Body Parsers
 app.use(express.json());
 app.use(cookieParser());
 
-// --- ROUTES --- 
-// Ensure file names match exactly (case-sensitive)
+// --- ROUTES ---
 app.use('/Signup', require('./Signup'));
 app.use('/sendotp', require('./sendotp'));
 app.use('/verifyotp', require('./verifyotp'));
@@ -67,23 +81,26 @@ app.use('/fetchOrders', require('./fetchOrders'));
 app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
-// --- SERVE FRONTEND (if needed) ---
+// --- ERROR HANDLER ---
+app.use((err, req, res, next) => {
+  console.error('🔥 Server Error:', err.message);
+  res.status(500).json({ error: err.message });
+});
+
+// --- (OPTIONAL) SERVE FRONTEND BUILD ---
+// Uncomment if you want Render to serve your frontend directly from here.
 /*
-// Uncomment this section if your server is also responsible for serving the built frontend files.
 const frontendPath = path.join(__dirname, '../../Frontend/App/dist');
-
-// Serve static files from the frontend build directory
 app.use(express.static(frontendPath));
-
-// CATCH-ALL ROUTE for React Router (must be AFTER all API routes)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 */
 
 // --- START SERVER ---
-
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
-    console.log(`App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`);
+  console.log(
+    `🚀 App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`
+  );
 });
