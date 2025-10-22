@@ -25,14 +25,15 @@ mongoose
 
 // --- MIDDLEWARES ---
 
-// ✅ Allow all origins (temporary fix)
+
 app.use(
   cors({
-    origin: '*',
+    origin: ['https://zenvio-frontend.onrender.com', 'http://localhost:5173'], // your frontend URLs
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   })
 );
+
 
 app.use(express.json());
 app.use(cookieParser());
