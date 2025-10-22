@@ -10,7 +10,7 @@ export default function HomeSeller() {
   const [totalrevenue,settotalrevenue]=useState(0)
 
   async function logout(){
-    const result = await fetch('http://localhost:7000/logout',{
+    const result = await fetch('https://zenvio-h5be.onrender.com/logout',{
       method:'post',
       credentials:'include'
     })
@@ -27,7 +27,7 @@ export default function HomeSeller() {
   }
 
   async function fetchOrders(){
-    const result = await fetch('http://localhost:7000/fetchOrders',{
+    const result = await fetch('https://zenvio-h5be.onrender.com/fetchOrders',{
       method:'post',
       credentials:'include',
       headers:{

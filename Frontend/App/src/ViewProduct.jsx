@@ -12,7 +12,7 @@ export default function ViewProduct() {
 
   useEffect(() => {
     async function fetchproduct() {
-      const result = await fetch(`http://localhost:7000/viewproduct/${productid}`);
+      const result = await fetch(`https://zenvio-h5be.onrender.com/viewproduct/${productid}`);
       let r = await result.json();
       setproduct(r.product);
       setseller(r.seller);
@@ -21,7 +21,7 @@ export default function ViewProduct() {
   }, [productid]);
 
   async function addtocart() {
-    const result = await fetch("http://localhost:7000/addtocart", {
+    const result = await fetch("https://zenvio-h5be.onrender.com/addtocart", {
       method: "post",
       body: JSON.stringify({ productid: product._id }),
       credentials: "include",

@@ -25,7 +25,7 @@ export default function SignupAsSeller() {
     e.preventDefault()
     setbuttontext('Sending OTP ...')
 
-    let result = await fetch('http://localhost:7000/sendotpseller',{
+    let result = await fetch('https://zenvio-h5be.onrender.com/sendotpseller',{
       method:'post',
       body:JSON.stringify({email,username}),
       headers:{

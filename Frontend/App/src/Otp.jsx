@@ -23,7 +23,7 @@ export default function Otp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await fetch('http://localhost:7000/Signup',{
+    const result = await fetch('https://zenvio-h5be.onrender.com/Signup',{
         method:'post',
         body:JSON.stringify({username,email,password,otp}),
         headers:{

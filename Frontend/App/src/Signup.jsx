@@ -18,7 +18,7 @@ const userdata = {username,email,password}
 async function handleSubmit(e){
   e.preventDefault()
   setbuttontext('Sending OTP ...')
-  let result = await fetch('http://localhost:7000/sendotp',{
+  let result = await fetch('https://zenvio-h5be.onrender.com/sendotp',{
     method:'post',
     body:JSON.stringify({email,username}),
     headers:{

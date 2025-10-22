@@ -8,7 +8,7 @@ export default function YourCart(){
 
 
     async function getcart(){
-        const result = await fetch('http://localhost:7000/getcart',{
+        const result = await fetch('https://zenvio-h5be.onrender.com/getcart',{
             method:'post',
             credentials:'include',
             headers:{
@@ -21,7 +21,7 @@ export default function YourCart(){
     }
 
     async function removecart(productid){
-      const result = await fetch('http://localhost:7000/removecart',{
+      const result = await fetch('https://zenvio-h5be.onrender.com/removecart',{
         method:'post',
         credentials:'include',
         body:JSON.stringify({productid:productid}),

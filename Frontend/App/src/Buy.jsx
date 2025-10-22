@@ -48,7 +48,7 @@ export default function Buy() {
   }
       
 
-      const result = await fetch('http://localhost:7000/confirmorder',
+      const result = await fetch('https://zenvio-h5be.onrender.com/confirmorder',
         {
           method:'post',
           credentials:'include',
