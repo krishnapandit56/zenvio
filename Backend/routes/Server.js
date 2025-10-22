@@ -23,17 +23,28 @@ mongoose
     process.exit(1);
   });
 
-// --- MIDDLEWARES ---
+// --- CORS MIDDLEWARE ---
+const allowedOrigins = [
+  'https://zenvio-h5be.onrender.com',  // <-- your frontend URL on Vercel
+  'https://zenvio-frontend.onrender.com', // if this is your other domain
+  'http://localhost:5173'
+];
 
-
-app.use(
-  cors({
-    origin: ['https://zenvio-frontend.onrender.com', 'http://localhost:5173'], // your frontend URLs
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  })
-);
-
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -61,17 +72,7 @@ app.use('/fetchOrders', require('./fetchOrders'));
 app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
-// --- ERROR HANDLER ---
-app.use((err, req, res, next) => {
-  console.error('🔥 Server Error:', err.message, err.stack);
-  if (res.headersSent) return next(err);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: isProduction ? 'An unexpected error occurred.' : err.message,
-  });
-});
-
-// --- START SERVER ---
+// --- SERVER START ---
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
   console.log(`🚀 App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`);
