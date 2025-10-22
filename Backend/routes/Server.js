@@ -16,46 +16,24 @@ const MONGOURL = process.env.MONGOURL;
 const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
 
 // Define allowed origins based on the environment
-const allowedOrigins = isProduction
-    ? [FRONTEND_PROD_URL]
+const originUrls = isProduction
+    ? FRONTEND_PROD_URL
     : [
-        'http://localhost:3000',  // Common React/Web dev port
-        'http://localhost:5173',  // Common Vite/React dev port (Likely yours)
-        'http://localhost:7000',  // Allow requests from the same origin if using default server port
-        FRONTEND_PROD_URL         // Allow the production URL even in dev for testing
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:7000',
+        FRONTEND_PROD_URL
       ];
 
-// --- MONGODB CONNECTION ---
-
-async function connectdb() {
-    try {
-        await mongoose.connect(MONGOURL);
-        console.log('MongoDB Connected !!');
-    } catch (e) {
-        console.log('MongoDB Not Connected, error:', e);
-    }
-}
-connectdb();
+// ... (MONGODB CONNECTION)
 
 // --- MIDDLEWARES ---
 
-// 1. CORS Configuration: Dynamic Origin Resolution
+// 1. SIMPLIFIED CORS Configuration
+// This is less prone to throwing uncaught errors in the callback function.
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or same-origin)
-        if (!origin) return callback(null, true); 
-
-        // Check if the origin is in the allowed list
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            // Log the denied origin for debugging
-            console.log(`CORS Error: Origin ${origin} not allowed.`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: originUrls, // Pass the array/string directly to the origin property
     credentials: true,
-    // Enhance security by restricting methods and headers
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204
