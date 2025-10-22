@@ -1,11 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
-// ✅ Disable lightningcss to fix Render/Vercel builds
+// https://vite.dev/config/
 export default defineConfig({
-  base: './',
-  plugins: [react()],
-  css: {
-    transformer: 'postcss', // force Vite to use PostCSS instead of LightningCSS
-  },
+  plugins: [react(),tailwindcss()],
 })
