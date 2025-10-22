@@ -1,12 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// ✅ DO NOT import tailwindcss here — Tailwind is handled via postcss.config.js
+// https://vitejs.dev/config/
 export default defineConfig({
+  // 💡 Add this line to force relative paths for static assets
+  base: './', 
   plugins: [react()],
-  server: {
-    proxy: {
-      '/': 'https://zenvio-h5be.onrender.com',
-    },
-  },
 })
