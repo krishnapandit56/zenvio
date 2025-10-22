@@ -11,7 +11,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 const MONGOURL = process.env.MONGOURL;
 const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
 
-// Allowed origins
 const originUrls = isProduction
   ? [FRONTEND_PROD_URL]
   : [
@@ -21,7 +20,6 @@ const originUrls = isProduction
       FRONTEND_PROD_URL,
     ];
 
-// --- LOGGING ---
 console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
 console.log('Allowed origins:', originUrls);
@@ -37,19 +35,35 @@ mongoose
 
 // --- MIDDLEWARES ---
 
-// ✅ SAFE CORS CONFIG (handles 204 issue)
+// ✅ SAFE CORS CONFIG (Render-friendly)
 app.use(
   cors({
-    origin: originUrls,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Allow requests like Postman or same-origin
+      if (originUrls.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.error('🚫 Blocked by CORS:', origin);
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    optionsSuccessStatus: 200, // ✅ prevents 204 preflight issue
+    optionsSuccessStatus: 200,
   })
 );
 
-// ✅ Handle all OPTIONS requests globally
+// ✅ Handle OPTIONS preflight globally
 app.options('*', cors({
-  origin: originUrls,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (originUrls.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.error('🚫 Blocked by CORS (OPTIONS):', origin);
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   optionsSuccessStatus: 200,
@@ -83,25 +97,13 @@ app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
 // --- ERROR HANDLER ---
 app.use((err, req, res, next) => {
-  console.error('🔥 Server Error:', err.message, err.stack);
-  
+  console.error('🔥 Server Error:', err.message);
   if (res.headersSent) return next(err);
-
   res.status(500).json({
     error: 'Internal Server Error',
     message: isProduction ? 'An unexpected error occurred.' : err.message,
   });
 });
-
-// --- (OPTIONAL) SERVE FRONTEND BUILD ---
-// Uncomment if you want to serve your React build from backend
-/*
-const frontendPath = path.join(__dirname, '../../Frontend/App/dist');
-app.use(express.static(frontendPath));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
-*/
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 7000;
