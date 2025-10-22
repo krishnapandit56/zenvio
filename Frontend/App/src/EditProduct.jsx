@@ -52,7 +52,7 @@ export default function EditProduct() {
   }
 
 
-    let result = await fetch('/editProduct',{
+    let result = await fetch('http://localhost:7000/editProduct',{
       method:'post',
       body:JSON.stringify({updatedata,productid:element._id}),
       credentials:'include',

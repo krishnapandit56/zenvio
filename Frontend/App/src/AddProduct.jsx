@@ -56,7 +56,7 @@ export default function AddProduct() {
 
     setstatus('Uploading Data ...')
 
-    let result = await fetch('/addProduct',{
+    let result = await fetch('http://localhost:7000/addProduct',{
       method:'post',
       body:JSON.stringify({productname,imageurl,category,subcategory,sizes,material,price,quantity,username,deliverytime,availablecities}),
       credentials:'include',
