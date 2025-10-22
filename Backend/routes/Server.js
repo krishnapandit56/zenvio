@@ -4,31 +4,69 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../env/.env') }); // adjust if .env location changes
 
-// MONGODB CONNECTION
-const mongourl = process.env.MONGOURL;
+// NOTE: Ensure your .env file is correctly located relative to this server.js file.
+// The path '../../env/.env' suggests two levels up, then into an 'env' folder.
+require('dotenv').config({ path: path.join(__dirname, '../../env/.env') });
+
+// --- ENVIRONMENT AND CONFIGURATION ---
+
+const isProduction = process.env.NODE_ENV === 'production';
+const MONGOURL = process.env.MONGOURL;
+const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
+
+// Define allowed origins based on the environment
+const allowedOrigins = isProduction
+    ? [FRONTEND_PROD_URL]
+    : [
+        'http://localhost:3000',  // Common React/Web dev port
+        'http://localhost:5173',  // Common Vite/React dev port (Likely yours)
+        'http://localhost:7000',  // Allow requests from the same origin if using default server port
+        FRONTEND_PROD_URL         // Allow the production URL even in dev for testing
+      ];
+
+// --- MONGODB CONNECTION ---
 
 async function connectdb() {
-  try {
-    await mongoose.connect(mongourl);
-    console.log('MongoDB Connected !!');
-  } catch (e) {
-    console.log('MongoDB Not Connected, error:', e);
-  }
+    try {
+        await mongoose.connect(MONGOURL);
+        console.log('MongoDB Connected !!');
+    } catch (e) {
+        console.log('MongoDB Not Connected, error:', e);
+    }
 }
 connectdb();
 
-// MIDDLEWARES
+// --- MIDDLEWARES ---
+
+// 1. CORS Configuration: Dynamic Origin Resolution
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, or same-origin)
+        if (!origin) return callback(null, true); 
+
+        // Check if the origin is in the allowed list
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            // Log the denied origin for debugging
+            console.log(`CORS Error: Origin ${origin} not allowed.`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    // Enhance security by restricting methods and headers
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+}));
+
+// 2. Body Parsers
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS — only enable localhost in development
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({ origin: 'https://zenvio-h5be.onrender.com/', credentials: true }));
-}
-
-// ROUTES — ensure file names match exactly (case-sensitive)
+// --- ROUTES --- 
+// Ensure file names match exactly (case-sensitive)
 app.use('/Signup', require('./Signup'));
 app.use('/sendotp', require('./sendotp'));
 app.use('/verifyotp', require('./verifyotp'));
@@ -51,17 +89,23 @@ app.use('/fetchOrders', require('./fetchOrders'));
 app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
-// // SERVE FRONTEND (React build from Vite)
-// const frontendPath = path.join(__dirname, '../../Frontend/App/dist');
-// app.use(express.static(frontendPath));
+// --- SERVE FRONTEND (if needed) ---
+/*
+// Uncomment this section if your server is also responsible for serving the built frontend files.
+const frontendPath = path.join(__dirname, '../../Frontend/App/dist');
 
-// CATCH-ALL ROUTE for React Router
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(frontendPath, 'index.html'));
-// });
+// Serve static files from the frontend build directory
+app.use(express.static(frontendPath));
 
-// START SERVER
+// CATCH-ALL ROUTE for React Router (must be AFTER all API routes)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+*/
+
+// --- START SERVER ---
+
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}`);
+    console.log(`App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`);
 });
