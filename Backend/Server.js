@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config({ path: '../env/.env' });
-const cookieparser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../env/.env') }); // adjust if .env location changes
 
 // MONGODB CONNECTION
 const mongourl = process.env.MONGOURL;
@@ -12,23 +12,23 @@ const mongourl = process.env.MONGOURL;
 async function connectdb() {
   try {
     await mongoose.connect(mongourl);
-    console.log('Mongodb Connected !!');
+    console.log('MongoDB Connected !!');
   } catch (e) {
-    console.log('Mongodb Not Connected, error:', e);
+    console.log('MongoDB Not Connected, error:', e);
   }
 }
 connectdb();
 
 // MIDDLEWARES
 app.use(express.json());
-app.use(cookieparser());
+app.use(cookieParser());
 
 // CORS — only enable localhost in development
 if (process.env.NODE_ENV !== 'production') {
   app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 }
 
-// ROUTES
+// ROUTES — ensure file names match exactly (case-sensitive)
 app.use('/Signup', require('./routes/Signup'));
 app.use('/sendotp', require('./routes/sendotp'));
 app.use('/verifyotp', require('./routes/verifyotp'));
@@ -51,12 +51,13 @@ app.use('/fetchOrders', require('./routes/fetchOrders'));
 app.use('/addrecentsearch', require('./routes/addrecentsearch'));
 app.use('/fetchrecentsearch', require('./routes/fetchrecentsearch'));
 
-// ✅ Serve Frontend (React build)
-app.use(express.static(path.join(__dirname, '../../frontend/app/dist')));
+// SERVE FRONTEND (React build from Vite)
+const frontendPath = path.join(__dirname, '../../Frontend/App/dist');
+app.use(express.static(frontendPath));
 
-// ✅ Handle React Router (catch-all route)
+// CATCH-ALL ROUTE for React Router
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../../frontend/app/dist', 'index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // START SERVER
