@@ -6,68 +6,47 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../env/.env') });
 
-// --- ENVIRONMENT CONFIGURATION ---
+// --- ENVIRONMENT AND CONFIGURATION ---
 const isProduction = process.env.NODE_ENV === 'production';
 const MONGOURL = process.env.MONGOURL;
 const FRONTEND_PROD_URL = 'https://zenvio-h5be.onrender.com';
 
+// Allowed origins
+// NOTE: Ensure 'http://localhost:5173' matches your frontend's exact development port.
 const originUrls = isProduction
-  ? [FRONTEND_PROD_URL]
-  : [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:7000',
-      FRONTEND_PROD_URL,
-    ];
+  ? FRONTEND_PROD_URL // Single string for production
+  : [
+      'http://localhost:3000',
+      'http://localhost:5173', 
+      'http://localhost:7000',
+      FRONTEND_PROD_URL,
+    ];
 
+// --- LOGGING (for deployment debugging) ---
 console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
 console.log('Allowed origins:', originUrls);
 
 // --- MONGODB CONNECTION ---
 mongoose
-  .connect(MONGOURL)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
-  });
+  .connect(MONGOURL) // Removed deprecated options as they are default in Mongoose 6+
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // --- MIDDLEWARES ---
 
-// ✅ SAFE CORS CONFIG (Render-friendly)
+// ✅ FINAL SAFE CORS SETUP: Pass the array/string directly to the origin property.
+// The `cors` library handles array checking without crashing the server.
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Allow requests like Postman or same-origin
-      if (originUrls.includes(origin)) {
-        return callback(null, true);
-      } else {
-        console.error('🚫 Blocked by CORS:', origin);
-        return callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    optionsSuccessStatus: 200,
-  })
+  cors({
+    origin: originUrls, 
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  })
 );
-
-// ✅ Handle OPTIONS preflight globally
-app.options('*', cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (originUrls.includes(origin)) {
-      return callback(null, true);
-    } else {
-      console.error('🚫 Blocked by CORS (OPTIONS):', origin);
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  optionsSuccessStatus: 200,
-}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -96,19 +75,25 @@ app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
 // --- ERROR HANDLER ---
+// A generic error handler to prevent uncaught exceptions from crashing the process
 app.use((err, req, res, next) => {
-  console.error('🔥 Server Error:', err.message);
-  if (res.headersSent) return next(err);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: isProduction ? 'An unexpected error occurred.' : err.message,
+  console.error('🔥 Server Error:', err.message, err.stack);
+  
+  // Set status to 500 if headers haven't been sent, otherwise let Express handle it.
+  if (res.headersSent) {
+    return next(err);
+  }
+  
+  res.status(500).json({ 
+    error: 'Internal Server Error', 
+    message: isProduction ? 'An unexpected error occurred.' : err.message // Hide detailed error in prod
   });
 });
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
-  console.log(
-    `🚀 App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`
-  );
+  console.log(
+    `🚀 App running on port ${PORT} in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode.`
+  );
 });
