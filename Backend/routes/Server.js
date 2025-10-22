@@ -25,7 +25,7 @@ app.use(cookieParser());
 
 // CORS — only enable localhost in development
 if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+  app.use(cors({ origin: 'https://zenvio-h5be.onrender.com/', credentials: true }));
 }
 
 // ROUTES — ensure file names match exactly (case-sensitive)
