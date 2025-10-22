@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "postinstall": "npm rebuild lightningcss",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
