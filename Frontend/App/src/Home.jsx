@@ -250,7 +250,7 @@ useEffect(() => {
           </div>
         )}
 
-        {searchtext.length === 0 &&
+        {/* {searchtext.length === 0 &&
           recentarray.map((element) => (
             <div
               key={element._id}
@@ -299,7 +299,7 @@ useEffect(() => {
                 </h2>
               </div>
             </div>
-          ))}
+          ))} */}
       </div>
     </div>
   );
