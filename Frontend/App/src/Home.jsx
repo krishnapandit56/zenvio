@@ -65,8 +65,12 @@ useEffect(() => {
     });
     let r1 = await result1.json();
     setrecentarray(r1.products);
-    console.log(recentarray)
+    
   }
+  useEffect(() => {
+  console.log("Updated recentarray:", recentarray);
+}, [recentarray]);
+
 
   useEffect(() => {
     fetchrecentsearch();
