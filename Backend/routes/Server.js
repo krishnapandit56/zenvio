@@ -88,6 +88,11 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.use(cors({
+  origin: 'https://zenvio-1.onrender.com',  // ✅ your frontend URL
+  credentials: true                         // ✅ allow sending cookies
+}));
+
 // --- START SERVER ---
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
