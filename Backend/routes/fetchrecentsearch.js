@@ -6,6 +6,7 @@ const verifyToken = require('../middleware/verifyToken');
 
 router.post('/', verifyToken, async (req, res) => {
   const username = req.username;
+  
 
   try {
     const result = await recentSchema.findOne({ username });

@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../env/.env') });
+require('dotenv').config({ path: path.join(__dirname, '../env/.env') });
 
 // --- ENVIRONMENT CONFIGURATION ---
 const isProduction = process.env.NODE_ENV === 'production';
@@ -14,13 +14,15 @@ console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
 
 // --- MONGODB CONNECTION ---
-mongoose
-  .connect(MONGOURL)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
-  });
+(async () => {
+  try {
+    await mongoose.connect(MONGOURL);
+    console.log('✅ MongoDB connected !!');
+  } catch (e) {
+    console.log('❌ Error while connecting MongoDB', e);
+  }
+})();
+
 
 // --- CORS SETUP ---
 const allowedOrigins = [
@@ -88,10 +90,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.use(cors({
-  origin: 'https://zenvio-1.onrender.com',  // ✅ your frontend URL
-  credentials: true                         // ✅ allow sending cookies
-}));
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 7000;
