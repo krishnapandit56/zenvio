@@ -22,7 +22,8 @@ let result = await fetch('https://zenvio-h5be.onrender.com/signin',{
 })
 const r = await result.json()
 if(r.status==1){
-  Navigate('/Home',{state:username})
+  localStorage.setItem("username", username);
+  Navigate('/Home')
 }
 else{
   setbuttontext('Sign In')

@@ -4,7 +4,18 @@ import { useLocation } from "react-router-dom";
 export default function AddProduct() {
 
   const location = useLocation()
-  const username = location.state;
+  const [username, setUsername] = useState("");
+
+useEffect(() => {
+  const storedUsername = localStorage.getItem("username");
+  if (storedUsername) {
+    setUsername(storedUsername);
+  } else {
+    // if not logged in, redirect to signin
+    Navigate("/", { replace: true });
+  }
+}, []);
+
   const [productname,setproductname]=useState('')
   const [image,setimage]=useState('')
   const [category,setcategory]=useState('')
