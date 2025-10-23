@@ -74,6 +74,7 @@ app.use('/confirmorder', require('./confirmorder'));
 app.use('/fetchOrders', require('./fetchOrders'));
 app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
+app.use('/test',require('./test'))
 
 // --- TEST ROUTE ---
 app.get('/', (req, res) => {
