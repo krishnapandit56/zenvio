@@ -9,6 +9,13 @@ require('dotenv').config({ path: path.join(__dirname, '../env/.env') });
 const isProduction = process.env.NODE_ENV === 'production';
 const MONGOURL = process.env.MONGOURL;
 
+app.use(cors({
+  origin: '*', // or specific frontend URL, e.g. 'https://zenvio.vercel.app'
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
+
 // --- LOGGING ---
 console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
