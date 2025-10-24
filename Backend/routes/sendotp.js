@@ -9,62 +9,103 @@ router.post('/', async (req, res) => {
   console.log('Body:', req.body);
 
   const { email, username } = req.body;
-
   if (!email || !username) {
+    console.log('❌ Missing email or username');
     return res.json({ statusmessage: 'Invalid input', statuscode: 0 });
   }
 
+  // Debug: make sure env vars present
+  console.log('DEBUG: MAIL_USER present?', !!process.env.MAIL_USER);
+  console.log('DEBUG: MAIL_PASS present?', !!process.env.MAIL_PASS);
+
   try {
-    // --- Check if user already exists ---
-    const usernamechk = await userModel.findOne({ username });
-    if (usernamechk)
+    // --- Check duplicates ---
+    if (await userModel.findOne({ username })) {
+      console.log('Username exists');
       return res.json({ statusmessage: 'Username Already Taken !!', statuscode: 0 });
-
-    const emailchk = await userModel.findOne({ email });
-    if (emailchk)
+    }
+    if (await userModel.findOne({ email })) {
+      console.log('Email exists');
       return res.json({ statusmessage: 'Email Already Exist !!', statuscode: 0 });
+    }
 
-    // --- Generate OTP ---
+    // --- Generate & store OTP ---
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setotp(email, otp);
     console.log(`Generated OTP: ${otp} for ${email}`);
 
-    // --- Setup Nodemailer Transport ---
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
+    // --- Transport: prefer explicit host/port ---
+    const transportOptions = {
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: 'krishnapandit52005@gmail.com',
-        pass: 'ytkxrphtfydoakfo'
+        user: process.env.MAIL_USER || 'krishnapandit52005@gmail.com',
+        pass: process.env.MAIL_PASS || 'ytkxrphtfydoakfo', // fallback only for local debugging
       },
+      // debug: true // you can enable this if you want verbose SMTP logs
+    };
+
+    console.log('DEBUG transportOptions:', {
+      host: transportOptions.host,
+      port: transportOptions.port,
+      secure: transportOptions.secure,
+      userSet: !!transportOptions.auth.user,
+      passSet: !!transportOptions.auth.pass,
     });
 
-    // --- Send Mail with Timeout (prevents hanging) ---
-    const mailPromise = transport.sendMail({
-      from: 'krishnapandit52005@gmail.com',
+    const transporter = nodemailer.createTransport(transportOptions);
+
+    // Verify transport first for clearer error messages
+    try {
+      await transporter.verify();
+      console.log('✅ transporter verified (SMTP connection & auth ok)');
+    } catch (verifyErr) {
+      console.error('❌ transporter.verify() failed:', verifyErr);
+      // return useful info to frontend for debugging (remove in production)
+      return res.json({
+        statusmessage: 'Error verifying mail transport',
+        statuscode: 0,
+        emailstatus: 0,
+        error: verifyErr.message,
+        errorCode: verifyErr.code || null,
+      });
+    }
+
+    // --- Send mail with a controlled timeout ---
+    const mailOptions = {
+      from: `"Zenvio" <${transportOptions.auth.user}>`,
       to: email,
       subject: 'OTP For Zenvio',
       text: `Your OTP for Zenvio is ${otp}. Use this OTP to create your account.`,
-    });
+    };
 
-    // timeout after 10s if Gmail hangs
+    const mailPromise = transporter.sendMail(mailOptions);
+
+    const timeoutMs = 15000; // 15s
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Mail send timeout')), 10000)
+      setTimeout(() => reject(new Error('Mail send timeout')), timeoutMs)
     );
 
     await Promise.race([mailPromise, timeoutPromise]);
 
-    console.log(`✅ OTP mail sent successfully to ${email}`);
+    console.log('✅ OTP mail sent successfully to', email);
     return res.json({
       statusmessage: 'OTP Sent Successfully!',
       emailstatus: 1,
       statuscode: 1,
     });
+
   } catch (err) {
     console.error('❌ Error in /sendotp:', err);
+    // return the raw error for debugging — remove in production
     return res.json({
-      statusmessage: err,
-      emailstatus: 0,
+      statusmessage: 'Error sending OTP. Try again.',
       statuscode: 0,
+      emailstatus: 0,
+      error: err.message,
+      errorCode: err.code || null,
+      stack: err.stack ? err.stack.split('\n').slice(0,4) : undefined
     });
   }
 });
