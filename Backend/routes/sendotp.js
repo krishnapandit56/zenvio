@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error('❌ Error in /sendotp:', err);
     return res.json({
-      statusmessage: 'Error sending OTP. Try again.',
+      statusmessage: err,
       emailstatus: 0,
       statuscode: 0,
     });
