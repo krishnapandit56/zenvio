@@ -26,6 +26,7 @@ async function handleSubmit(e){
     }
   })
   let r = await result.json()
+  console.log('r is  ',r)
   setstatusmessage(r.statusmessage)
   if(r.statuscode==0){
     setbuttontext('Sign Up')
