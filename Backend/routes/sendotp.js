@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 
     const sendSmtpEmail = {
       to: [{ email }],
-      sender: { name: "Zenvio", email: "youremail@gmail.com" }, // your Brevo-verified email
+      sender: { name: "Zenvio", email: "krishnapandit52005@gmail.com" }, // your Brevo-verified email
       subject: "Your OTP for Zenvio",
       textContent: `Your OTP for Zenvio is ${otp}. Use this OTP to complete signup.`,
     };
