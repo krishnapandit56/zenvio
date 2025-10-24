@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const { setotp } = require('./otpstore');
 const userModel = require('../schemas/userSchema');
+const SibApiV3Sdk = require('@getbrevo/brevo');
 
 router.post('/', async (req, res) => {
   const { email, username } = req.body;
@@ -18,22 +18,17 @@ router.post('/', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setotp(email, otp);
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 
-    await transporter.sendMail({
-      from: `"Zenvio" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: 'Your OTP for Zenvio',
-      text: `Your OTP for Zenvio is ${otp}. Use this OTP to create your account.`,
-    });
+    const sendSmtpEmail = {
+      to: [{ email }],
+      sender: { name: "Zenvio", email: "youremail@gmail.com" }, // your Brevo-verified email
+      subject: "Your OTP for Zenvio",
+      textContent: `Your OTP for Zenvio is ${otp}. Use this OTP to complete signup.`,
+    };
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
     return res.json({
       statusmessage: 'OTP Sent Successfully!',
