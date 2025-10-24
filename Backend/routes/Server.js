@@ -9,13 +9,6 @@ require('dotenv').config({ path: path.join(__dirname, '../env/.env') });
 const isProduction = process.env.NODE_ENV === 'production';
 const MONGOURL = process.env.MONGOURL;
 
-app.use(cors({
-  origin: '*', // or specific frontend URL, e.g. 'https://zenvio.vercel.app'
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
-
-
 // --- LOGGING ---
 console.log('Environment:', process.env.NODE_ENV);
 console.log('isProduction:', isProduction);
@@ -30,24 +23,27 @@ console.log('isProduction:', isProduction);
   }
 })();
 
-
 // --- CORS SETUP ---
 const allowedOrigins = [
   'https://zenvio-1.onrender.com', // deployed frontend
-  'http://localhost:5173'           // local dev
+  'http://localhost:5173'          // local dev
 ];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+
+  // ✅ Allow from allowed origins or fallback to '*'
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
   }
 
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Preflight request
+  // ✅ Respond immediately to preflight requests
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
@@ -82,7 +78,6 @@ app.use('/fetchOrders', require('./fetchOrders'));
 app.use('/addrecentsearch', require('./addrecentsearch'));
 app.use('/fetchrecentsearch', require('./fetchrecentsearch'));
 
-
 // --- TEST ROUTE ---
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Server is running 🚀' });
@@ -97,7 +92,6 @@ app.use((err, req, res, next) => {
     message: isProduction ? 'An unexpected error occurred.' : err.message
   });
 });
-
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 7000;
