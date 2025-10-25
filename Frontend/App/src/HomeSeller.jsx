@@ -67,7 +67,7 @@ export default function HomeSeller() {
       {/* Top Bar */}
       <div className="flex items-center justify-between bg-gradient-to-r from-white to-[#f1ac66] text-white p-4 pr-10">
         <h1 className="text-lg font-bold text-gray-700">
-          Dashboard ({username})
+          Dashboard For {username}
         </h1>
         <button
           className="!bg-white text-black px-4 pr-0 rounded-lg hover:!bg-gray-200"
@@ -164,7 +164,7 @@ export default function HomeSeller() {
             </div>
             <div className="bg-white p-6 rounded-xl shadow text-center">
               <h3 className="text-xl font-bold">Views</h3>
-              <p className="text-2xl font-semibold mt-2">8,940</p>
+              <p className="text-2xl font-semibold mt-2">NA</p>
             </div>
           </div>
 

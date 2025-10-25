@@ -11,21 +11,27 @@ router.post('/', verifyToken, async (req, res) => {
     // Add the new keyword at the start and keep only latest 4 items
 if (keyword && keyword.trim() !== "") {
   await recentSearchSchema.updateOne(
-    { username },
-    [
-      { 
-        $set: {
-          recentarray: { 
-            $slice: [
-              { $concatArrays: [[keyword], "$recentarray"] }, 
-              4
-            ]
-          }
+  { username },
+  [
+    { 
+      $set: {
+        recentarray: { 
+          $slice: [
+            { 
+              $concatArrays: [
+                [keyword],
+                { $ifNull: ["$recentarray", []] } // <-- handle null
+              ] 
+            }, 
+            4
+          ]
         }
       }
-    ],
-    { upsert: true }
-  );
+    }
+  ],
+  { upsert: true }
+);
+
 }
 
 

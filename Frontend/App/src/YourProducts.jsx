@@ -63,8 +63,8 @@ export default function YourProducts() {
   return (
     <div className="h-screen w-screen bg-white flex items-center justify-center overflow-auto">
       <div className="h-[710px] w-screen flex flex-col gap-4 overflow-auto pl-5 pt-1 pr-5">
-        <h1 className="text-black flex justify-center">
-          Your Products ({username})
+        <h1 className="text-black flex justify-center bg-orange-100 p-3">
+          Your Products 
         </h1>
         {array.map((element) => (
           <div
