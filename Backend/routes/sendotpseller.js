@@ -1,60 +1,59 @@
-const express = require('express')
-const router = express.Router()
-const nodemailer = require('nodemailer')
-const {setotp} = require('./otpstore')
-const userModel=require('../schemas/userSellerSchema')
+const express = require('express');
+const router = express.Router();
+const { setotp } = require('./otpstore');
+const userModel = require('../schemas/userSellerSchema');
+const SibApiV3Sdk = require('@getbrevo/brevo');
 
-router.post('/',async(req ,res)=>{
-    console.log('send otp seller called')
-    const email=req.body.email
-    const username = req.body.username 
-    
-    //////////////////////// CHECKING IF USER EXIST OR NOT //////////////////
+router.post('/', async (req, res) => {
+  const { email, username } = req.body;
+  if (!email || !username)
+    return res.json({ statusmessage: 'Invalid input', statuscode: 0 });
 
-    const usernamechk = await userModel.findOne({username})
-    if(usernamechk){
-        res.json({statusmessage:'Username Already Taken !!',statuscode:0})
-    }
+  try {
+    // ✅ Check if username already exists
+    if (await userModel.findOne({ username }))
+      return res.json({ statusmessage: 'Username Already Taken !!', statuscode: 0 });
 
-    const emailchk = await userModel.findOne({email})
-    if(emailchk){
-       res.json({statusmessage:'Email Already Exist !!',statuscode:0})
-    }
+    // ✅ Check if email already exists
+    if (await userModel.findOne({ email }))
+      return res.json({ statusmessage: 'Email Already Exist !!', statuscode: 0 });
 
-    ///////////////////////////////////////////////////////////////////////
+    // ✅ Generate OTP and store
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setotp(email, otp);
 
-    ////////////////////// GENERATE OTP /////////////////////
-const otp =  Math.floor(100000 + Math.random() * 900000).toString();
-router.otp=otp
+    // ✅ Configure Brevo SDK
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    apiInstance.setApiKey(
+      SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY
+    );
 
-///////////////////////////////////SENDING MAIL////////////////////////////
-const transport = nodemailer.createTransport({
-    service:"gmail",
-    auth:{
-         user:'krishnapandit52005@gmail.com',
-         pass:'ytkxrphtfydoakfo'
-    }
-})
+    // ✅ Compose and send email
+    const sendSmtpEmail = {
+      to: [{ email }],
+      sender: { name: "Zenvio", email: "krishnapandit52005@gmail.com" }, // must be Brevo-verified sender
+      subject: "Your OTP for Zenvio",
+      textContent: `Your OTP for Zenvio is ${otp}. Use this OTP to complete signup.`,
+    };
 
-try{
-const response=await transport.sendMail({
-    from:"krishnapandit52005@gmail.com",
-    to:email,
-    subject:'OTP For Zenvio ',
-    text:`"Your OTP for Zenvio is ${otp} . Use this otp to create account on Zenvio"`
-})
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 
-res.json({emailstatus:1})
-}
-catch(e){
-res.json({emailstatus:0})
-}
-//////////////////SETTING OTP FOR BACKEND/////////////////////
+    // ✅ Response
+    return res.json({
+      statusmessage: 'OTP Sent Successfully!',
+      emailstatus: 1,
+      statuscode: 1,
+    });
+  } catch (err) {
+    console.error('❌ Error sending OTP:', err);
+    return res.json({
+      statusmessage: 'Error sending OTP. Try again later.',
+      statuscode: 0,
+      emailstatus: 0,
+      error: err.message,
+    });
+  }
+});
 
-setotp(email,otp)
-
-
-
-})
-
-module.exports = router
+module.exports = router;
