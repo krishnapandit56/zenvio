@@ -6,6 +6,7 @@ const verifyToken = require('../middleware/verifyToken')
 router.post('/',verifyToken,async(req,res)=>{
  try{
    const result = await productSchema.find({username:req.body.username})
+   console.log('username is : ',req.body.username ,'and products are ',result)
    res.json({result})
  }
  catch(e){
