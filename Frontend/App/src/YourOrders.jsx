@@ -12,7 +12,7 @@ export default function YourOrders(){
     const result = await fetch('https://zenvio-h5be.onrender.com/fetchOrders',{
       method:'post',
       credentials:'include',
-      body:JSON.stringify({customer:true}),
+      body:JSON.stringify({customer:true,username}),
       headers:{
         'Content-Type':'application/json'
       }
