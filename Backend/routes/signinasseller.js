@@ -1,32 +1,49 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const router = express.Router()
-const userModel = require('../schemas/userSellerSchema')
-require('dotenv').config({path:'../env/.env'})
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const userModel = require('../schemas/userSellerSchema');
+require('dotenv').config({ path: '../env/.env' });
 
-const secretkey = process.env.SECRETKEY
+const secretkey = process.env.SECRETKEY;
 
-router.post('/',async(req ,res)=>{
-    
-const user= await userModel.findOne(req.body)
+router.post('/', async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-if(user){
-/////////////////////// GENERATING TOKEN //////////////////////
-    const token = jwt.sign({username:req.body.username,userid:user._id},secretkey,{expiresIn:"1h"});
+    const user = await userModel.findOne({ username, password });
 
-    res.cookie('token',token,{
-      httpOnly:true,
-      secure:false,
-      sameSite:'lax',
-      maxAge:7200000
-    })
-     
-    res.json({status:1})
-//////////////////////////////////////////////////////////////
-}
-if(!user){
-    res.json({status:0,statusmessage:'Invalid Credentials'})
-}
-})
+    if (user) {
+      // Generate JWT
+      const token = jwt.sign(
+        { username: user.username, userid: user._id },
+        secretkey,
+        { expiresIn: '1h' }
+      );
 
-module.exports = router
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 7200000,
+      });
+
+      return res.json({
+        statuscode: 1,
+        statusmessage: 'Login successful',
+      });
+    } else {
+      return res.json({
+        statuscode: 0,
+        statusmessage: 'Invalid Credentials',
+      });
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.json({
+      statuscode: 0,
+      statusmessage: 'Server Error',
+    });
+  }
+});
+
+module.exports = router;
