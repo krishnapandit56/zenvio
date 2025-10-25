@@ -19,9 +19,11 @@ export default function SigninAsSeller() {
       }
     })
     const r = await result.json()
-    if(r.status==1){
-      Navigate('/home-seller',{state:username})
-    }
+   if (r.statuscode === 1) {
+  localStorage.setItem("username", username);   // ✅ store logged-in username
+  Navigate('/HomeSeller');
+}
+
     else{
       console.log('user not found !!')
     }
