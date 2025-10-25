@@ -21,7 +21,7 @@ export default function SigninAsSeller() {
     const r = await result.json()
    if (r.statuscode === 1) {
   localStorage.setItem("username", username);   // ✅ store logged-in username
-  Navigate('/HomeSeller');
+  Navigate('/home-seller');
 }
 
     else{
