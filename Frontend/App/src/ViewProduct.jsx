@@ -37,7 +37,7 @@ export default function ViewProduct() {
     <>
       {/* 🔸 Added top orange strip */}
 <div className="fixed top-0 left-0 w-full bg-orange-100 text-center py-2 text-xl font-semibold text-gray-800 shadow-sm z-50">
-  <h2 className="text-3xl"><b>ZENVIO</b> – showcase your style</h2>
+  <h2 className="text-2xl"><b>ZENVIO</b> – showcase your style</h2>
 </div>
 
 

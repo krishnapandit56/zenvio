@@ -101,18 +101,18 @@ export default function Home() {
   return (
     <div className="min-h-screen max-w-screen  bg-gray-50 overflow-x-hidden overflow-y-auto">
       {/* Navbar */}
-      <nav className=" w-[300px] flex items-center justify-center md:flex md:flex-row gap-10 md: fixed md:w-full top-0 bg-orange-100 shadow-sm px-6 py-3 flex items-center">
+      <nav className=" w-screen flex items-center justify-center md:flex md:flex-row gap-10 md: fixed md:w-full top-0 bg-orange-100 shadow-sm px-6 py-3 flex items-center">
         <div className="relative  md:static  md:flex-shrink-0 text-5xl font-extrabold text-gray-800 tracking-wide">
           ZENVIO
         </div>
         <div className="relative top-[120px] left-[50px] md:static md:top-auto flex-1 flex justify-center mx-4 flex-shrink-0 ">
-          <div className="!flex-shrink-0 flex w-[600px] relative right-[100px] ">
+          <div className="!flex-shrink-0 flex w-[600px] relative right-[140px] ">
             <input
               type="text"
               placeholder="Search clothing..."
               value={searchtext || ""}
               onChange={(e) => setSearchtext(e.target.value)}
-              className="w-[250px] absolute left-[120px] md:relative md:left-auto  md:w-auto md:flex-1 h-10 px-3 border border-gray-300 rounded-l-md focus:outline-none !bg-white text-black"
+              className="w-[250px] absolute left-[140px] md:relative md:left-auto  md:w-auto md:flex-1 h-10 px-3 border border-gray-300 rounded-l-md focus:outline-none !bg-white text-black"
             />
             <button
               onClick={search}
@@ -167,36 +167,36 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="w-[490px] block relative left-[7px] right-[15px] md:hidden flex md:w-[380px] md:flex space-x-1 flex-shrink-0 fixed top-0 right-1 h-[72px] ">
+      <div className="w-screen block relative left-[7px] right-[15px] md:hidden flex md:w-[380px] md:flex space-x-1 flex-shrink-0 fixed top-0 right-1 h-[72px] ">
         <button
           onClick={() => {
             Navigate("/yourcart", { state: username });
           }}
-          className="w-[80px] md:w-[100px] flex items-center justify-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition"
+          className="w-[91px] md:w-[100px] flex items-center justify-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition"
         >
           Your Cart
         </button>
-        <button className="overflow-hidden w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700  !rounded-none hover:!bg-orange-100 transition">
+        <button className="overflow-hidden w-[91px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700  !rounded-none hover:!bg-orange-100 transition">
           Your Orders
         </button>
-        <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
+        <button className="w-[91px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-200 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
           {username}
         </button>
-        <button className="w-[80px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-300 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
+        <button className="w-[91px] md:w-[100px] flex items-center md:px-0 py-0 !bg-orange-300 text-gray-700 !rounded-none hover:!bg-orange-100 transition">
           Logout
         </button>
       </div>
 
-      <div className="relative top-[5px] left-[70px]  md:hidden text-5xl font-extrabold text-gray-800 tracking-wide">
+      <div className="relative top-[5px] left-[90px]  md:hidden text-5xl font-extrabold text-gray-800 tracking-wide">
         ZENVIO
       </div>
 
       {/* Search results */}
-      <div className="relative top-[100px] text-[10px] md:text-sm md:relative pb-4 md:w-[350px] md:w-screen h-[601.5px] bg-white overflow-auto scroll-smooth px-4">
+      <div className="relative left-1.5 top-[100px] text-[10px] md:text-sm md:relative pb-4 md:w-[350px] md:w-screen h-[601.5px] bg-white overflow-auto scroll-smooth px-4">
         {searcharray.map((element) => (
           <div
             key={element._id}
-            className="w-[320px] md:w-auto md:flex flex-row md:gap-2 items-center justify-center md:border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-9 mb-4 hover:cursor-pointer"
+            className="w-[350px] md:w-auto md:flex flex-row md:gap-2 items-center justify-center md:border-gray-600 rounded-[5px] flex items-center shadow-md shadow-gray-400 pt-8 pl-2 pr-9 mb-4 hover:cursor-pointer"
             onClick={() => {
               Navigate(
                 `/viewproduct?productname=${element.productname}&productid=${element._id}`,
