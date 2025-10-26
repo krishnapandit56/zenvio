@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 export default function HomeSeller() {
   const Navigate = useNavigate();
@@ -181,7 +182,7 @@ export default function HomeSeller() {
             <button
               className="bg-gray-700 text-white px-6 py-3 rounded-full shadow hover:!bg-gray-600"
               onClick={() => {
-                Navigate("/Add-Product", { state: username });
+                Navigate("/Add-Product");
               }}
             >
               Add New Product
